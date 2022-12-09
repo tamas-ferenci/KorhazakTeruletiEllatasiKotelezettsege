@@ -113,14 +113,16 @@ ellátást hogyan lehet racionális alapon optimálisan szervezni.
 
 A fenti célt – megítélésem szerint – sikerült megvalósítanom.
 
-A teljes magyar TEK-tábla [innen]() letölthető tömörített CSV
-formátumban. Azon túl, hogy tartalmazza az X-TEK rendszer „Listás
-lekérdezés” oldalán található valamennyi információt, de
-egybeszerkesztve, gépi úton feldolgozható formában, kiegészítettem pár,
-a további elemzésekhez hasznos információval: csatoltam a NEAK tábla
-alapján az ellátó kórház adatai (kódszámok, pontos címek, osztály
-megnevezése stb.), valamint minden település mellett szerepel a megyéje,
-járása, jogállása (község, város stb.) és a 2022-es lakónépessége, a KSH
+A teljes magyar TEK-tábla
+[innen](https://github.com/tamas-ferenci/KorhazakTeruletiEllatasiKotelezettsege/raw/main/TEKres_full_20221207.zip)
+letölthető tömörített CSV formátumban. Azon túl, hogy tartalmazza az
+X-TEK rendszer „Listás lekérdezés” oldalán található valamennyi
+információt, de egybeszerkesztve, gépi úton feldolgozható formában,
+kiegészítettem pár, a további elemzésekhez hasznos információval:
+csatoltam a NEAK tábla alapján az ellátó kórház adatai (kódszámok,
+pontos címek, osztály megnevezése stb.), valamint minden település
+mellett szerepel a megyéje, járása, jogállása (község, város stb.) és a
+2022-es lakónépessége, a KSH
 [Helységnévtára](https://www.ksh.hu/apps/hntr.main) alapján. Ezen felül
 megtalálható, hogy a település és az ellátó kórház helye között mennyi a
 közúti eljutási idő. Ez utóbbi adat egy [másik
