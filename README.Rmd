@@ -61,6 +61,8 @@ Ha ezzel megvagyunk, akkor jöhet az adatok tisztítása, adatbázisba rendezés
 
 A számítások megvalósítása `R` [statisztikai környezet](https://www.youtube.com/@FerenciTamas/playlists?view=50&sort=dd&shelf_id=2) alatt készült, `data.table`, `ggplot2` és -- az interaktív térképekhez -- `leaflet` csomagok használatával. Az eredményeket megjelenítő webolda `shiny` segítségével készült, a forráskódját szintén elérhetővé tettem.
 
+A TEK adatok letöltésének dátuma: 2022. december 7.
+
 A reprodukálhatóság és a nyílt tudomány jegyében a számítást végző valamennyi kód letölthető erről az oldalról. Remélem ez a hibák megtalálását is segíti: bár igyekeztem gondosan eljárni, garancia nincs a tökéletességre, éppen ezért minden észrevételt és kritikát örömmel veszek.
 
 ## A honlap működése

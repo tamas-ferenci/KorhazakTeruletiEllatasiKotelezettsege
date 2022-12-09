@@ -180,6 +180,8 @@ alatt készült, `data.table`, `ggplot2` és – az interaktív térképekhez �
 `leaflet` csomagok használatával. Az eredményeket megjelenítő webolda
 `shiny` segítségével készült, a forráskódját szintén elérhetővé tettem.
 
+A TEK adatok letöltésének dátuma: 2022. december 7.
+
 A reprodukálhatóság és a nyílt tudomány jegyében a számítást végző
 valamennyi kód letölthető erről az oldalról. Remélem ez a hibák
 megtalálását is segíti: bár igyekeztem gondosan eljárni, garancia nincs
