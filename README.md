@@ -163,11 +163,13 @@ pontosan azt a bemenetet kapja – mintha valaki a számítógép előtt ülve
 kattintgatna, de valójában ezt egy program végzi. A feladat ezt a
 programot megírni, illetve a weboldal által visszaküldött adatokat
 lementeni, és az érdemi tartalmat kiszedni. Ennek megvalósításának
-részleteit a függelékben, egy külön pontban mutatom be.
+részleteit a függelékben, egy [külön
+pontban](#függelék-az-x-tek-adatainak-letöltése) mutatom be.
 
 Ha ezzel megvagyunk, akkor jöhet az adatok tisztítása, adatbázisba
 rendezése, és kiegészítése az egyéb, további elemzések számára hasznos
-információkkal. Ennek részleteit szintén külön pontban mutatom be a
+információkkal. Ennek részleteit szintén [külön
+pontban](#függelék-az-adatok-tisztítása-és-előkészítése) mutatom be a
 függelékben.
 
 A számítások megvalósítása `R` [statisztikai
