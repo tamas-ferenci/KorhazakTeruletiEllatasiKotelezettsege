@@ -860,8 +860,8 @@ TEKData$Telepules[grepl("Budapest", TEKData$Telepules)] <-
     ". kerület")
 TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)] <-
   paste0("Budapest ", sprintf("%02d", as.numeric(as.roman(sapply(strsplit(
-    substring(TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)], 10), ".", fixed = TRUE),
-    `[`, 1)))), ". kerület")
+    substring(TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)], 10), ".",
+    fixed = TRUE), `[`, 1)))), ". kerület")
 ```
 
 Végül pedig kiegészítjük a táblát a korábban említett
