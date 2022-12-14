@@ -6,6 +6,7 @@ output:
   github_document:
     pandoc_args: ["--lua-filter=pandoc-quotes.lua"]
     toc: TRUE
+    df_print: kable
 always_allow_html: true
 lang: hu
 editor_options:
@@ -116,7 +117,7 @@ De akkor mi a probléma? Nézzünk néhány példát!
 Íme a szülészet (aktív, 2-es progresszivitás):
 
 <p align="center">
-  <img src="SzuleszetPelda.png" alt="Részlet a szülészeti ellátás szervezéséből" width="300"/>
+<img src="SzuleszetPelda.png" alt="Részlet a szülészeti ellátás szervezéséből" width="300"/>
 </p>
 
 A 8. kerületet a 8. kerület látja el, ha átmegyünk Budára, akkor már nem (a 11. kerületet a 11. kerület látja el), de ha még távolabb megyünk, akkor _megint_ a 8. kerület válik az ellátóvá! (Egészen Pusztazámorig.) Ugyanez a helyzet akkor, ha délre indulunk: a 9. kerületet a 9. kerület látja el, a 21.-et a 20., de ha még tovább megyük akkor _megint_ a 8. kerület válik az ellátóvá, egészen le Dömsödig.
@@ -124,7 +125,7 @@ A 8. kerületet a 8. kerület látja el, ha átmegyünk Budára, akkor már nem 
 Ez azonban semmi az allergológiai ellátáshoz képest:
 
 <p align="center">
-  <img src="AllergologiaPelda.png" alt="Részlet az allergológiai ellátás szervezéséből" width="300"/>
+<img src="AllergologiaPelda.png" alt="Részlet az allergológiai ellátás szervezéséből" width="300"/>
 </p>
 
 A környéken mindent a 6. kerület lát el, ám Vác körül van egy "enklávé" amit a 2. kerület...
@@ -134,7 +135,7 @@ Ilyen példák tucatjával találhatóak a magyar TEK-rendszerben!
 A személyes kedvencem, gyermekneurológia (2-es progresszivitási szint, aktív):
 
 <p align="center">
-  <img src="GyermekneurologiaPelda.png" alt="Részlet a gyermekneurológiai ellátás szervezéséből" width="300"/>
+<img src="GyermekneurologiaPelda.png" alt="Részlet a gyermekneurológiai ellátás szervezéséből" width="300"/>
 </p>
 
 30 kilométeres körzetben mindenki máshová tartozik, de egyedül és kizárólagosan Tápióság, ez az egyetlen egy település mégis a 8. kerülethez van rendelve.
@@ -170,9 +171,11 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
       if(oldal>1) {
         if(oldal<11)
           driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
-                                        num, "-1.ILinkListener-lista-navigator-navigation-", oldal-1, "-pageLink")) else
-                                          driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
-                                                                        num, "-1.ILinkListener-lista-navigator-last"))
+                                        num, "-1.ILinkListener-lista-navigator-navigation-", oldal-1,
+                                        "-pageLink")) else
+                                          driver$client$navigate(paste0(
+                                            "http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
+                                            num, "-1.ILinkListener-lista-navigator-last"))
       }
       
       res <- driver$client$getPageSource()
@@ -182,7 +185,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
       res <- res[seq(3, 31, 2)]
       
       if(!grepl("select", res[sor])) NULL else {
-        driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket", substring(res[sor], 3)))
+        driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket",
+                                      substring(res[sor], 3)))
         
         res <- driver$client$getPageSource()
         res <- rvest::read_html(res[[1]])
@@ -192,7 +196,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         i <- 1
         szakmak <- character()
         
-        while(length(szakma <- rvest::html_text(rvest::html_nodes(res, xpath = paste0("/html/body/div[1]/div[5]/b[", i, "]"))))>0) {
+        while(length(szakma <- rvest::html_text(rvest::html_nodes(
+          res, xpath = paste0("/html/body/div[1]/div[5]/b[", i, "]"))))>0) {
           szakmak <- c(szakmak, szakma)
           i <- i+1
         }
@@ -200,7 +205,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         i <- 1
         telepulesek <- character()
         
-        while(length(telepules <- rvest::html_text(rvest::html_nodes(res, xpath = paste0("/html/body/div[1]/div[5]/div[", i, "]"))))>0) {
+        while(length(telepules <- rvest::html_text(rvest::html_nodes(res, xpath = paste0(
+          "/html/body/div[1]/div[5]/div[", i, "]"))))>0) {
           telepulesek <- c(telepulesek, telepules)
           i <- i+1
         }
@@ -208,7 +214,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         seps <- which(telepulesek=="")
         
         rbindlist(lapply(1:(length(seps)-1), function(i)
-          data.table(Korhaz = korhaz, Szakma = szakmak[i], Telepules = telepulesek[(seps[i]+1):(seps[i+1]-1)])))
+          data.table(Korhaz = korhaz, Szakma = szakmak[i],
+                     Telepules = telepulesek[(seps[i]+1):(seps[i+1]-1)])))
       }
     }
   }))
@@ -219,61 +226,114 @@ saveRDS(tekres, "TEKres_20221207.rds")
 
 ## Függelék: az adatok tisztítása és előkészítése
 
-Az előző pontban létrehozott adatbázis még komoly előkészítést igényel. Elsőként ellenőrizzük, hogy a "Speciális" nevű szakterület nyugodtan eltávolítható (egyik esetben sem tartozik hozzá település), majd ezt követően a nagyon hosszú, és sok -- különböző -- információt tartalmazó `Szakma` oszlopot szétszedjük szemantikusan. Az eredményt minden ponton ellenőrizzük, illetve a progresszivitási szintek kapcsán egy komolyabb adattisztításra is szükség van (a táblában az 1 megtalálható úgy is, hogy `1`, úgy is, hogy `I.` és úgy is, hogy `I`...):
+Az előző pontban létrehozott adatbázis még komoly előkészítést igényel. Kezdjük a `Szakma` oszloppal; illusztrációul néhány értéke:
 
-```{r, eval = FALSE}
+```{r}
 TEKData <- readRDS("TEKres_20221207.rds")
 
-unique(TEKData$Szakma)
+as.data.table(unique(TEKData$Szakma))[1:10, .(`Szakma` = V1)]
+```
 
-TEKData[Szakma=="Speciális:"]
+Egyetlen név lóg ki a fentiek látható sémából, a "Speciális" nevű szakterület, de ez nyugodtan eltávolítható, egyik esetben sem tartozik hozzá település:
+
+```{r}
 sum(TEKData[Szakma=="Speciális:"]$Telepules!="")
-
 TEKData <- TEKData[Szakma!="Speciális:"]
+```
 
-# TEKData$Szakma <- gsub(" ", "", TEKData$Szakma)
+Ezt követően a nagyon hosszú, és sok -- különböző -- információt tartalmazó `Szakma` oszlopot szétszedjük szemantikusan. Elsőként leválasztjuk az első négy karaktert, ami a szakma kódja, majd a nevét meghatározzuk úgy, hogy innentől elmegyünk az első kettősponting:
 
+```{r}
 TEKData$SzakmaKod <- substring(TEKData$Szakma, 1, 4)
 TEKData$Szakma <- substring(TEKData$Szakma, 6)
-
 TEKData$SzakmaNev <- trimws(sapply(strsplit(TEKData$Szakma, ":"), `[`, 1))
+```
 
-as.data.table(table(TEKData$SzakmaKod, TEKData$SzakmaNev))[N!=0][order(V1)]
+Ellenőrizzük vissza, hogy a hozzárendelés csakugyan egyértelmű volt, majd miután látjuk, hogy jól dolgoztunk:
 
+```{r}
+as.data.table(table(TEKData$SzakmaKod, TEKData$SzakmaNev))[N!=0, .(`Kód` = V1, `Név` = V2, N)][order(`Kód`)]
+```
+
+Ezt követően ezt leválasztjuk a `Szakma` mezőből, vagyis csak az említett kettőspont utáni részt tartjuk meg:
+
+```{r}
 TEKData$Szakma <- trimws(sapply(stringi::stri_split_fixed(TEKData$Szakma, ":", n = 2), `[`, 2))
+```
 
+Ezután megkeressük a jelleget úgy, hogy az első vesszőig megyünk; itt is ellenőrzük vissza rögtön, hogy jól dolgoztunk-e:
+
+```{r}
 TEKData$Jelleg <- trimws(sapply(strsplit(TEKData$Szakma, ","), `[`, 1))
-unique(TEKData$Jelleg)
+as.data.table(unique(TEKData$Jelleg))[, .(`Jelleg` = V1)]
+```
 
+Mint látjuk, megnyugtató módon kizárólag "Fekvő" elnevezés szerepel.
+
+Ezt is leválasztjuk az elnevezésből, ehhez a kettőspont utántól kezdünk el dolgozni (hogy átugorjuk a fix `Progresszivitás` feliratot), majd kinyerjük a progresszivitási szintet:
+
+```{r}
 TEKData$Szakma <- trimws(sapply(strsplit(TEKData$Szakma, ":"), `[`, 2))
-
 TEKData$Prog <- trimws(sapply(strsplit(TEKData$Szakma, " "), `[`, 1))
-unique(TEKData$Prog)
-TEKData[Prog=="Nappali"]
+as.data.table(unique(TEKData$Prog))[, .(`Progresszivitási szint` = V1)]
+```
+
+A "Nappali" egy speciális kategória (és eleve nem progresszivitási szint, nem is értem hogy került ide), úgyhogy elhagyhatjuk:
+
+```{r}
 TEKData <- TEKData[Prog!="Nappali"]
+```
+
+Mint látható, a progresszivitási szint leírásával sajnos még ezen túlmenően is két baj van. Az egyik tényleges nehézség, jelesül, hogy valójában nem három szint van, mert a 2-n belül van 2a és 2b. A nagyobb gond, illetve ami vegytisztán adatbeviteli hiba, hogy emellett a leírásban is teljes összevisszaság van, mint látható, a táblában az 1 megtalálható úgy is, hogy `1`, úgy is, hogy `I.` és úgy is, hogy `I`... Az a/b aláosztást ne használjuk (de azért a táblában megőrizzük, ha valakinek kellene), illetve tegyük egységessé a sokféle írásformát:
+
+```{r}
 TEKData$ProgClean <- dplyr::case_when(
   TEKData$Prog%in%c("1", "I", "I.") ~ "1",
   TEKData$Prog%in%c("2", "2a", "2b", "II.", "2.", "2.a.", "II", "II.b") ~ "2",
   TEKData$Prog%in%c("3", "3a", "III.", "3.") ~ "3")
-table(TEKData$Prog, TEKData$ProgClean)
+knitr::kable(table(TEKData$Prog, TEKData$ProgClean))
+```
 
+Ezt szintén leválasztjuk, majd a zárójelet keresve kiszedjük a típust is:
+
+```{r}
 TEKData$Szakma <- trimws(sapply(strsplit(TEKData$Szakma, " "), `[`, 2))
-
 TEKData$Tipus <- trimws(sapply(strsplit(TEKData$Szakma, "[()]"), `[`, 2))
-unique(TEKData$Tipus)
-TEKData$Szakma <- paste0(TEKData$SzakmaKod, " - ", TEKData$SzakmaNev)
+as.data.table(unique(TEKData$Tipus))[, .(`Típus` = V1)]
+```
 
-unique(TEKData$Korhaz)
+Láthatjuk, hogy mindössze kétféle lehetőség van, így ha szeretnénk, hogy ezek nagybetűvel legyenek leírva, akkor ezt az alábbi módon is javíthatjuk egyszerűen:
+
+```{r}
+TEKData$Tipus <- ifelse(TEKData$Tipus=="aktív", "Aktív", "Krónikus")
+```
+
+Végezetül a `Szakma` mezőt arra hasznosítjuk, hogy eltároljuk egyben a szakma nevét és kódját:
+
+```{r}
+TEKData$Szakma <- paste0(TEKData$SzakmaKod, " - ", TEKData$SzakmaNev)
+```
+
+Utolsó lépésben kell még valamit kezdeni a kórház nevével. Nézzük meg itt is az első néhány példát:
+
+```{r}
+as.data.table(unique(TEKData$Korhaz))[1:10, .(`Kórház` = V1)]
+```
+
+Itt trükkösnek kell lenni, az utolsó zárójeles részt keresve találhatjuk meg a kórház kódját (azért van szükség erre, mert sajnos a kórház nevében is lehet zárójel):
+
+```{r}
 TEKData$KorhazNev <- trimws(sapply(strsplit(TEKData$Korhaz, "(", fixed = TRUE), `[`, 1))
 TEKData$EgyediKod <- sub(".*\\((.*)\\).*", "\\1", TEKData$Korhaz)
 ```
 
-Problémát jelent a kórházak adatainak beazonosítása. A fentiekben, ha nem is könnyen, de ki tudtunk szedni egy hatjegyű azonosítót, ezt egyedi kódnak szokták hívni, a gond az, hogy bár a NEAK-nál van [egy lista](http://www.neak.gov.hu/felso_menu/lakossagnak/szerzodott_szolgaltatok/fekvobeteg_ellatast_nyujto_intezmenyek_korhaz.html) az ország összes kórházának összes osztályáról, de ez egy _másik_ kódot használ... Jobb híján kézzel rendeltem össze a kettőt egy külön segédtáblában:
+Problémát jelent a kórházak adatainak beazonosítása. A fentiekben, ha nem is könnyen, de ki tudtunk szedni egy azonosítót (mivel a kórház nevének a végén szerepelt zárójelben), ezt a hat karakterből, jellemzően, de nem mindig csupa számból álló kódot egyedi azonosítónak vagy OTH-kódnak [szokták hívni](https://e-egeszsegugy.gov.hu/documents/26398/1339647/EESZT+azonos%C3%ADt%C3%A1sra+haszn%C3%A1latos+azonos%C3%ADt%C3%B3k+eg%C3%A9szs%C3%A9g%C3%BCgyi+szolg%C3%A1ltat%C3%B3k+r%C3%A9sz%C3%A9re.pdf/d13d65ba-30df-cc18-714f-652c9abdff48). A gond az, hogy bár a NEAK-nál van [egy lista](http://www.neak.gov.hu/felso_menu/lakossagnak/szerzodott_szolgaltatok/fekvobeteg_ellatast_nyujto_intezmenyek_korhaz.html) az ország összes kórházának összes osztályáról, de ez egy _másik_ kódot használ... (NEAK-kódnak szokták hívni, ez 4 karakter, jellemzően, de nem mindig az első karakter betű, a többi szám.) Igen ám, de olyan tábla meg persze nincsen, vagy legalábbis én nem találtam, ami a kétféle kódot összerendelné egymással! Jobb híján ezért kézzel párosítottam a kettőt egy külön segédtáblában, kézzel kikeresve a neveket. (Felmerülhet a kérdés, hogy miért kézzel csináltam ezt, miért nem rendeltem össze egyszerűen a két táblát gépi úton, a nevek alapján. A válasz jellemző, talán senkit nem fogok meglepni: azért, mert a NEAK-nál szereplő, előbb említett fájlban lévő kórháznevek és az X-TEK táblában lévő kórháznevek nem egyeznek pontosan. Például a NEAK-táblában "Bács-Kiskun Megyei Kórház, Kecskemét" szerepel, az X-TEK-ben "Bács-Kiskun Megyei Kórház a Szegedi Tudományegyetem Általános Orvostudományi Kar Oktató Kórháza" a megnevezés...) Az összerendelő tábla [innen](https://github.com/tamas-ferenci/KorhazakTeruletiEllatasiKotelezettsege/raw/main/KhNEAKEgyedi.csv) tölthető le; a kód ami ezt előkészíti, majd a végeredményt beolvassa:
 
-```{r, eval = FALSE}
+```{r, message = FALSE}
 fwrite(unique(TEKData[, .(Korhaz, EgyediKod)])[order(Korhaz)], "KhNEAKEgyediKi.csv", dec = ",", sep = ";",
        bom = TRUE)
-KhLista <- as.data.table(readxl::read_excel("fekvobeteg_szakellato_intezmenyek_telephellyel_202211.xlsx", .name_repair = "universal"))
+KhLista <- as.data.table(readxl::read_excel("fekvobeteg_szakellato_intezmenyek_telephellyel_202211.xlsx",
+                                            .name_repair = "universal"))
 colnames(KhLista)[colnames(KhLista)=="NEAK.kód"] <- "NEAKKod"
 colnames(KhLista)[colnames(KhLista)=="Szakmakód"] <- "SzakmaKod"
 
@@ -284,15 +344,20 @@ KhLista <- merge(KhLista, KhNEAKEgyedi[, .(EgyediKod, NEAKKod)], by = "NEAKKod")
 
 A gond az, hogy bizonyos esetekben még ugyanazon kórház ugyanazon osztályának is több telephelye van, ráadásul úgy, hogy azoknak még a városa sem ugyanaz. Ilyen esetekben, mivel lehetetlen eldönteni, hogy melyiket kell alapul venni, azt fogom használni, ami a legtöbbször előfordul (ha több ilyen is van, akkor a sorban elsőt, magyarán véletlenszerűen egyet):
 
-```{r, eval = FALSE}
-KhLista <- KhLista[, .SD[Telephely.városa==names(sort(-table(Telephely.városa)))[1]][1], .(EgyediKod, SzakmaKod)]
+```{r}
+KhLista <- KhLista[, .SD[Telephely.városa==names(sort(-table(Telephely.városa)))[1]][1],
+                   .(EgyediKod, SzakmaKod)]
 ```
 
-Így már befejezhetjük az adatok előkészítését:
+Így már összeilleszthetjük az X-TEK táblából kinyert adatokat a NEAK kórházi törzsével, feldúsítva az előzőt a kórház adataival (amiből persze a telephely városa lesz számunkra a legfontosabb):
 
-```{r, eval = FALSE}
+```{r}
 TEKData <- merge(TEKData, KhLista, by = c("EgyediKod", "SzakmaKod"))
+```
 
+A budapesti kerületeknél állítsuk át a számokat arab számokra, mivel a későbbi táblák is ezt fogják használni:
+
+```{r}
 TEKData$Telepules[grepl("Budapest", TEKData$Telepules)] <-
   paste0("Budapest ", sprintf("%02d", as.numeric(as.roman(sapply(strsplit(
     substring(TEKData$Telepules[grepl("Budapest", TEKData$Telepules)], 10), ".", fixed = TRUE), `[`, 1)))),
@@ -301,32 +366,48 @@ TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)] <-
   paste0("Budapest ", sprintf("%02d", as.numeric(as.roman(sapply(strsplit(
     substring(TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)], 10), ".", fixed = TRUE),
     `[`, 1)))), ". kerület")
-
-table(TEKData$Tipus)
-TEKData$Tipus <- ifelse(TEKData$Tipus=="aktív", "Aktív", "Krónikus")
-
-saveRDS(TEKData, "TEKres_proc_20221207.rds")
-fwrite(TEKData, "TEKres_proc_20221207.csv", dec = ",", sep = ";", bom = TRUE)
-zip("TEKres_proc_20221207.zip", "TEKres_proc_20221207.csv")
 ```
 
-Utolsó lépésben kiegészítjük a táblát a korábban említett plusz-információkkal:
+Végül pedig kiegészítjük a táblát a korábban említett plusz-információkkal:
 
-```{r, eval = FALSE}
-locs <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
-HNTdata <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
-geodata <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
-durationsLong <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+```{r}
+locs <- as.data.table(readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
+HNTdata <- as.data.table(readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
+geodata <- readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
+durationsLong <- readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+```
 
+A [közúti elérhetőségi adatbázisból](https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg) származó elérési időkkel, melyek megadják a település és az ellátó kórház települési közti közúti elérési időt:
+
+```{r}
 TEKData <- merge(TEKData, durationsLong[, .(Telephely.városa = Var1, Telepules = Var2, Duration)],
                  by = c("Telephely.városa", "Telepules"))
-TEKData <- merge(TEKData, HNTdata[, .(Telepules = Helység.megnevezése, Helység.jogállása, TelepulesMegye = Megye.megnevezése,
-                                      Járás.neve, Lakó.népesség)], by = "Telepules")
-TEKData <- merge(TEKData, locs[, .(Telepules = NAME, TelepulesX = X, TelepulesY = Y)], by = "Telepules")
-TEKData <- merge(TEKData, locs[, .(Telephely.városa = NAME, TelephelyX = X, TelephelyY = Y)], by = "Telephely.városa")
+```
 
+A KSH Helységnévtárával, mely tartalmazza a település lélekszámát, megyéjét és jogállását:
+
+```{r}
+TEKData <- merge(TEKData, HNTdata[, .(Telepules = Helység.megnevezése, Helység.jogállása,
+                                      TelepulesMegye = Megye.megnevezése,
+                                      Járás.neve, Lakó.népesség)], by = "Telepules")
+```
+
+És a földrajzi adatbázissal, melynek révén elmentjük mind a település, mind az ellátó kórház településének földrajzi koordinátáit:
+
+```{r}
+TEKData <- merge(TEKData, locs[, .(Telepules = NAME, TelepulesX = X, TelepulesY = Y)], by = "Telepules")
+TEKData <- merge(TEKData, locs[, .(Telephely.városa = NAME, TelephelyX = X, TelephelyY = Y)],
+                 by = "Telephely.városa")
+```
+
+Az eredményeket szintén mentsük le:
+
+```{r}
 saveRDS(TEKData, "TEKres_full_20221207.rds")
 fwrite(TEKData, "TEKres_full_20221207.csv", dec = ",", sep = ";", bom = TRUE)
 zip("TEKres_full_20221207.zip", "TEKres_full_20221207.csv")
 ```
-

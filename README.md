@@ -445,9 +445,11 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
       if(oldal>1) {
         if(oldal<11)
           driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
-                                        num, "-1.ILinkListener-lista-navigator-navigation-", oldal-1, "-pageLink")) else
-                                          driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
-                                                                        num, "-1.ILinkListener-lista-navigator-last"))
+                                        num, "-1.ILinkListener-lista-navigator-navigation-", oldal-1,
+                                        "-pageLink")) else
+                                          driver$client$navigate(paste0(
+                                            "http://84.206.43.26:7080/ellatas/xtek/wicket/page?",
+                                            num, "-1.ILinkListener-lista-navigator-last"))
       }
       
       res <- driver$client$getPageSource()
@@ -457,7 +459,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
       res <- res[seq(3, 31, 2)]
       
       if(!grepl("select", res[sor])) NULL else {
-        driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket", substring(res[sor], 3)))
+        driver$client$navigate(paste0("http://84.206.43.26:7080/ellatas/xtek/wicket",
+                                      substring(res[sor], 3)))
         
         res <- driver$client$getPageSource()
         res <- rvest::read_html(res[[1]])
@@ -467,7 +470,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         i <- 1
         szakmak <- character()
         
-        while(length(szakma <- rvest::html_text(rvest::html_nodes(res, xpath = paste0("/html/body/div[1]/div[5]/b[", i, "]"))))>0) {
+        while(length(szakma <- rvest::html_text(rvest::html_nodes(
+          res, xpath = paste0("/html/body/div[1]/div[5]/b[", i, "]"))))>0) {
           szakmak <- c(szakmak, szakma)
           i <- i+1
         }
@@ -475,7 +479,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         i <- 1
         telepulesek <- character()
         
-        while(length(telepules <- rvest::html_text(rvest::html_nodes(res, xpath = paste0("/html/body/div[1]/div[5]/div[", i, "]"))))>0) {
+        while(length(telepules <- rvest::html_text(rvest::html_nodes(res, xpath = paste0(
+          "/html/body/div[1]/div[5]/div[", i, "]"))))>0) {
           telepulesek <- c(telepulesek, telepules)
           i <- i+1
         }
@@ -483,7 +488,8 @@ tekres <- rbindlist(lapply(1:11, function(oldal) {
         seps <- which(telepulesek=="")
         
         rbindlist(lapply(1:(length(seps)-1), function(i)
-          data.table(Korhaz = korhaz, Szakma = szakmak[i], Telepules = telepulesek[(seps[i]+1):(seps[i+1]-1)])))
+          data.table(Korhaz = korhaz, Szakma = szakmak[i],
+                     Telepules = telepulesek[(seps[i]+1):(seps[i+1]-1)])))
       }
     }
   }))
@@ -495,73 +501,327 @@ saveRDS(tekres, "TEKres_20221207.rds")
 ## Függelék: az adatok tisztítása és előkészítése
 
 Az előző pontban létrehozott adatbázis még komoly előkészítést igényel.
-Elsőként ellenőrizzük, hogy a „Speciális” nevű szakterület nyugodtan
-eltávolítható (egyik esetben sem tartozik hozzá település), majd ezt
-követően a nagyon hosszú, és sok – különböző – információt tartalmazó
-`Szakma` oszlopot szétszedjük szemantikusan. Az eredményt minden ponton
-ellenőrizzük, illetve a progresszivitási szintek kapcsán egy komolyabb
-adattisztításra is szükség van (a táblában az 1 megtalálható úgy is,
-hogy `1`, úgy is, hogy `I.` és úgy is, hogy `I`…):
+Kezdjük a `Szakma` oszloppal; illusztrációul néhány értéke:
 
 ``` r
 TEKData <- readRDS("TEKres_20221207.rds")
 
-unique(TEKData$Szakma)
+as.data.table(unique(TEKData$Szakma))[1:10, .(`Szakma` = V1)]
+```
 
-TEKData[Szakma=="Speciális:"]
+<div class="kable-table">
+
+| Szakma                                                                               |
+|:-------------------------------------------------------------------------------------|
+| 0100 Belgyógyászat : Fekvő ,Progresszivitás: 1 (aktív)                               |
+| 0102 Haematológia: Fekvő ,Progresszivitás: 1 (aktív)                                 |
+| 0102 Haematológia: Fekvő ,Progresszivitás: 2 (aktív)                                 |
+| 0103 Endokrinológia és anyagcsere és diabetológia: Fekvő ,Progresszivitás: 2 (aktív) |
+| 0104 Gasztroenterológia: Fekvő ,Progresszivitás: 2 (aktív)                           |
+| 0105 Nephrológia : Fekvő ,Progresszivitás: 2 (aktív)                                 |
+| 0200 Sebészet: Fekvő ,Progresszivitás: 2 (aktív)                                     |
+| 0202 Tüdő- és mellkassebészet : Fekvő ,Progresszivitás: 2 (aktív)                    |
+| 0203 Érsebészet: Fekvő ,Progresszivitás: 2 (aktív)                                   |
+| 0204 Idegsebészet: Fekvő ,Progresszivitás: 2 (aktív)                                 |
+
+</div>
+
+Egyetlen név lóg ki a fentiek látható sémából, a „Speciális” nevű
+szakterület, de ez nyugodtan eltávolítható, egyik esetben sem tartozik
+hozzá település:
+
+``` r
 sum(TEKData[Szakma=="Speciális:"]$Telepules!="")
+```
 
+    ## [1] 0
+
+``` r
 TEKData <- TEKData[Szakma!="Speciális:"]
+```
 
-# TEKData$Szakma <- gsub(" ", "", TEKData$Szakma)
+Ezt követően a nagyon hosszú, és sok – különböző – információt
+tartalmazó `Szakma` oszlopot szétszedjük szemantikusan. Elsőként
+leválasztjuk az első négy karaktert, ami a szakma kódja, majd a nevét
+meghatározzuk úgy, hogy innentől elmegyünk az első kettősponting:
 
+``` r
 TEKData$SzakmaKod <- substring(TEKData$Szakma, 1, 4)
 TEKData$Szakma <- substring(TEKData$Szakma, 6)
-
 TEKData$SzakmaNev <- trimws(sapply(strsplit(TEKData$Szakma, ":"), `[`, 1))
+```
 
-as.data.table(table(TEKData$SzakmaKod, TEKData$SzakmaNev))[N!=0][order(V1)]
+Ellenőrizzük vissza, hogy a hozzárendelés csakugyan egyértelmű volt,
+majd miután látjuk, hogy jól dolgoztunk:
 
+``` r
+as.data.table(table(TEKData$SzakmaKod, TEKData$SzakmaNev))[N!=0, .(`Kód` = V1, `Név` = V2, N)][order(`Kód`)]
+```
+
+<div class="kable-table">
+
+| Kód  | Név                                                                                                     |     N |
+|:-----|:--------------------------------------------------------------------------------------------------------|------:|
+| 0100 | Belgyógyászat                                                                                           |  6355 |
+| 0101 | Angiológia, phlebológia, lymphológia                                                                    |  6095 |
+| 0102 | Haematológia                                                                                            |  8986 |
+| 0103 | Endokrinológia és anyagcsere és diabetológia                                                            |  6251 |
+| 0104 | Gasztroenterológia                                                                                      |  6240 |
+| 0105 | Nephrológia                                                                                             |  6255 |
+| 0106 | Geriátria                                                                                               |  5486 |
+| 0109 | Allergológia és klinikai immunológia                                                                    |  5670 |
+| 0200 | Sebészet                                                                                                |  6012 |
+| 0202 | Tüdő- és mellkassebészet                                                                                |  4777 |
+| 0203 | Érsebészet                                                                                              |  6017 |
+| 0204 | Idegsebészet                                                                                            |  6010 |
+| 0205 | Szívsebészet                                                                                            |  2414 |
+| 0215 | Csecsemő és gyermek szívsebészet                                                                        |  3177 |
+| 0405 | Szülészet                                                                                               |  6222 |
+| 0406 | Nőgyógyászat                                                                                            | 12676 |
+| 0500 | Csecsemő- és gyermekgyógyászat                                                                          |  9290 |
+| 0502 | PIC                                                                                                     |  6140 |
+| 0503 | Csecsemő- és gyermekkardiológia                                                                         |  6252 |
+| 0504 | Gyermek-tüdőgyógyászat                                                                                  |  5907 |
+| 0505 | Gyermek-gasztroenterológia                                                                              |  5911 |
+| 0506 | Gyermeksebészet, ideértve gyermekurológia                                                               |  5910 |
+| 0508 | Gyermekszemészet                                                                                        |  2435 |
+| 0509 | Csecsemő- és gyermek fül-orr-gégegyógyászat                                                             |  6250 |
+| 0511 | Gyermekneurológia                                                                                       |  6151 |
+| 0515 | Csecsemő- és gyermekgyógyászati intenzív terápia                                                        |  5907 |
+| 0600 | Fül-orr-gégegyógyászat                                                                                  |  9437 |
+| 0700 | Szemészet                                                                                               |  5608 |
+| 0800 | Bőr- és nemibeteg ellátás                                                                               |  5908 |
+| 0900 | Neurológia                                                                                              |  9191 |
+| 0901 | Stroke ellátás                                                                                          |  3092 |
+| 1000 | Ortopédia                                                                                               |  5910 |
+| 1002 | Traumatológia                                                                                           |  9529 |
+| 1100 | Urológia                                                                                                |  6011 |
+| 1200 | Klinikai onkológia                                                                                      |  8661 |
+| 1201 | Sugárterápia                                                                                            |  5786 |
+| 1400 | Reumatológia                                                                                            |  9187 |
+| 1600 | Infektológia                                                                                            |  5911 |
+| 1700 | Arc-állcsont-szájsebészet                                                                               |  5027 |
+| 1800 | Pszichiátria                                                                                            | 12582 |
+| 1801 | Addiktológia                                                                                            |  3177 |
+| 1804 | Pszichiátriai rehabilitáció                                                                             |  9530 |
+| 1900 | Tüdőgyógyászat                                                                                          |  8828 |
+| 1903 | Tüdőgyógyászati és légzésrehabilitáció                                                                  |  5567 |
+| 2000 | Plasztikai helyreállító és esztétikai sebészet                                                          |  5010 |
+| 2001 | Égéssebészet                                                                                            |  5276 |
+| 2002 | Gyermek plasztikai és égéssebészet                                                                      |  3177 |
+| 2201 | Mozgásszervi rehabilitáció                                                                              |  9526 |
+| 2203 | Gasztroenterológiai rehabilitáció                                                                       |  9528 |
+| 2205 | Gyermek rehabilitáció                                                                                   |  6085 |
+| 2206 | Súlyos agysérültek rehabilitációja                                                                      |  3925 |
+| 2207 | Gerincvelő sérültek rehabilitációja                                                                     |  3177 |
+| 2208 | Polytraumatizált, égésbeteg és szeptikus csontfolyamatok utáni rehabilitáció                            |  3177 |
+| 2209 | Súlyos központi idegrendszeri sérültek, polytraumatizáltak és égésbetegek rehabilitációja gyermekkorban |  2413 |
+| 2300 | Gyermek- és ifjúságpszichiátria                                                                         |  3177 |
+| 2301 | Gyermek- és ifjúságpszichiátriai rehabilitáció                                                          |  3177 |
+| 2303 | Gyermek- és ifjúságaddiktológiai rehabilitáció                                                          |  3177 |
+| 4000 | Kardiológia                                                                                             |  9085 |
+| 4003 | Kardiológiai rehabilitáció                                                                              |  5956 |
+| 7305 | Ápolás, szakápolás                                                                                      |  3178 |
+| 7306 | Felnőtt hospice-palliatív ellátás                                                                       |  3162 |
+
+</div>
+
+Ezt követően ezt leválasztjuk a `Szakma` mezőből, vagyis csak az
+említett kettőspont utáni részt tartjuk meg:
+
+``` r
 TEKData$Szakma <- trimws(sapply(stringi::stri_split_fixed(TEKData$Szakma, ":", n = 2), `[`, 2))
+```
 
+Ezután megkeressük a jelleget úgy, hogy az első vesszőig megyünk; itt is
+ellenőrzük vissza rögtön, hogy jól dolgoztunk-e:
+
+``` r
 TEKData$Jelleg <- trimws(sapply(strsplit(TEKData$Szakma, ","), `[`, 1))
-unique(TEKData$Jelleg)
+as.data.table(unique(TEKData$Jelleg))[, .(`Jelleg` = V1)]
+```
 
+<div class="kable-table">
+
+| Jelleg |
+|:-------|
+| Fekvő  |
+
+</div>
+
+Mint látjuk, megnyugtató módon kizárólag „Fekvő” elnevezés szerepel.
+
+Ezt is leválasztjuk az elnevezésből, ehhez a kettőspont utántól kezdünk
+el dolgozni (hogy átugorjuk a fix `Progresszivitás` feliratot), majd
+kinyerjük a progresszivitási szintet:
+
+``` r
 TEKData$Szakma <- trimws(sapply(strsplit(TEKData$Szakma, ":"), `[`, 2))
-
 TEKData$Prog <- trimws(sapply(strsplit(TEKData$Szakma, " "), `[`, 1))
-unique(TEKData$Prog)
-TEKData[Prog=="Nappali"]
+as.data.table(unique(TEKData$Prog))[, .(`Progresszivitási szint` = V1)]
+```
+
+<div class="kable-table">
+
+| Progresszivitási szint |
+|:-----------------------|
+| 1                      |
+| 2                      |
+| 3                      |
+| 2a                     |
+| 2b                     |
+| I.                     |
+| II\.                   |
+| 2\.                    |
+| 3a                     |
+| Nappali                |
+| 2.a.                   |
+| I                      |
+| II                     |
+| III\.                  |
+| 3\.                    |
+| II.b                   |
+
+</div>
+
+A „Nappali” egy speciális kategória (és eleve nem progresszivitási
+szint, nem is értem hogy került ide), úgyhogy elhagyhatjuk:
+
+``` r
 TEKData <- TEKData[Prog!="Nappali"]
+```
+
+Mint látható, a progresszivitási szint leírásával sajnos még ezen
+túlmenően is két baj van. Az egyik tényleges nehézség, jelesül, hogy
+valójában nem három szint van, mert a 2-n belül van 2a és 2b. A nagyobb
+gond, illetve ami vegytisztán adatbeviteli hiba, hogy emellett a
+leírásban is teljes összevisszaság van, mint látható, a táblában az 1
+megtalálható úgy is, hogy `1`, úgy is, hogy `I.` és úgy is, hogy `I`… Az
+a/b aláosztást ne használjuk (de azért a táblában megőrizzük, ha
+valakinek kellene), illetve tegyük egységessé a sokféle írásformát:
+
+``` r
 TEKData$ProgClean <- dplyr::case_when(
   TEKData$Prog%in%c("1", "I", "I.") ~ "1",
   TEKData$Prog%in%c("2", "2a", "2b", "II.", "2.", "2.a.", "II", "II.b") ~ "2",
   TEKData$Prog%in%c("3", "3a", "III.", "3.") ~ "3")
-table(TEKData$Prog, TEKData$ProgClean)
+knitr::kable(table(TEKData$Prog, TEKData$ProgClean))
+```
 
+|       |     1 |      2 |      3 |
+|:------|------:|-------:|-------:|
+| 1     | 53023 |      0 |      0 |
+| 2     |     0 | 137328 |      0 |
+| 2\.   |     0 |    428 |      0 |
+| 2.a.  |     0 |     54 |      0 |
+| 2a    |     0 |   3214 |      0 |
+| 2b    |     0 |   6150 |      0 |
+| 3     |     0 |      0 | 157240 |
+| 3\.   |     0 |      0 |   2088 |
+| 3a    |     0 |      0 |   4822 |
+| I     |    52 |      0 |      0 |
+| I.    |  3613 |      0 |      0 |
+| II    |     0 |    327 |      0 |
+| II\.  |     0 |    138 |      0 |
+| II.b  |     0 |    300 |      0 |
+| III\. |     0 |      0 |    942 |
+
+Ezt szintén leválasztjuk, majd a zárójelet keresve kiszedjük a típust
+is:
+
+``` r
 TEKData$Szakma <- trimws(sapply(strsplit(TEKData$Szakma, " "), `[`, 2))
-
 TEKData$Tipus <- trimws(sapply(strsplit(TEKData$Szakma, "[()]"), `[`, 2))
-unique(TEKData$Tipus)
-TEKData$Szakma <- paste0(TEKData$SzakmaKod, " - ", TEKData$SzakmaNev)
+as.data.table(unique(TEKData$Tipus))[, .(`Típus` = V1)]
+```
 
-unique(TEKData$Korhaz)
+<div class="kable-table">
+
+| Típus    |
+|:---------|
+| aktív    |
+| krónikus |
+
+</div>
+
+Láthatjuk, hogy mindössze kétféle lehetőség van, így ha szeretnénk, hogy
+ezek nagybetűvel legyenek leírva, akkor ezt az alábbi módon is
+javíthatjuk egyszerűen:
+
+``` r
+TEKData$Tipus <- ifelse(TEKData$Tipus=="aktív", "Aktív", "Krónikus")
+```
+
+Végezetül a `Szakma` mezőt arra hasznosítjuk, hogy eltároljuk egyben a
+szakma nevét és kódját:
+
+``` r
+TEKData$Szakma <- paste0(TEKData$SzakmaKod, " - ", TEKData$SzakmaNev)
+```
+
+Utolsó lépésben kell még valamit kezdeni a kórház nevével. Nézzük meg
+itt is az első néhány példát:
+
+``` r
+as.data.table(unique(TEKData$Korhaz))[1:10, .(`Kórház` = V1)]
+```
+
+<div class="kable-table">
+
+| Kórház                                                                                                   |
+|:---------------------------------------------------------------------------------------------------------|
+| Bács-Kiskun Megyei Kórház a Szegedi Tudományegyetem Általános Orvostudományi Kar Oktató Kórháza (000301) |
+| Békés Megyei Központi Kórház (000401)                                                                    |
+| Nagykőrösi Rehabilitációs Szakkórház és Rendelőintézet (130300)                                          |
+| DR. LÁSZLÓ ELEK KÓRHÁZ ÉS RENDELŐINTÉZET, OROSHÁZA (040300)                                              |
+| Békés Megyei Központi Kórház (040200)                                                                    |
+| Kiskunhalasi Semmelweis Kórház (501177)                                                                  |
+| Szarvasi Szakorvosi Egészségügyi Szolgáltató Korlátolt Felelősségű Társaság (102780)                     |
+| Budapesti Szent Ferenc Kórház (220300)                                                                   |
+| Bajcsy-Zsilinszky Kórház és Rendelőintézet (011200)                                                      |
+| Betegápoló Irgalmas Rend (022852)                                                                        |
+
+</div>
+
+Itt trükkösnek kell lenni, az utolsó zárójeles részt keresve találhatjuk
+meg a kórház kódját (azért van szükség erre, mert sajnos a kórház
+nevében is lehet zárójel):
+
+``` r
 TEKData$KorhazNev <- trimws(sapply(strsplit(TEKData$Korhaz, "(", fixed = TRUE), `[`, 1))
 TEKData$EgyediKod <- sub(".*\\((.*)\\).*", "\\1", TEKData$Korhaz)
 ```
 
 Problémát jelent a kórházak adatainak beazonosítása. A fentiekben, ha
-nem is könnyen, de ki tudtunk szedni egy hatjegyű azonosítót, ezt egyedi
-kódnak szokták hívni, a gond az, hogy bár a NEAK-nál van [egy
+nem is könnyen, de ki tudtunk szedni egy azonosítót (mivel a kórház
+nevének a végén szerepelt zárójelben), ezt a hat karakterből,
+jellemzően, de nem mindig csupa számból álló kódot egyedi azonosítónak
+vagy OTH-kódnak [szokták
+hívni](https://e-egeszsegugy.gov.hu/documents/26398/1339647/EESZT+azonos%C3%ADt%C3%A1sra+haszn%C3%A1latos+azonos%C3%ADt%C3%B3k+eg%C3%A9szs%C3%A9g%C3%BCgyi+szolg%C3%A1ltat%C3%B3k+r%C3%A9sz%C3%A9re.pdf/d13d65ba-30df-cc18-714f-652c9abdff48).
+A gond az, hogy bár a NEAK-nál van [egy
 lista](http://www.neak.gov.hu/felso_menu/lakossagnak/szerzodott_szolgaltatok/fekvobeteg_ellatast_nyujto_intezmenyek_korhaz.html)
 az ország összes kórházának összes osztályáról, de ez egy *másik* kódot
-használ… Jobb híján kézzel rendeltem össze a kettőt egy külön
-segédtáblában:
+használ… (NEAK-kódnak szokták hívni, ez 4 karakter, jellemzően, de nem
+mindig az első karakter betű, a többi szám.) Igen ám, de olyan tábla meg
+persze nincsen, vagy legalábbis én nem találtam, ami a kétféle kódot
+összerendelné egymással! Jobb híján ezért kézzel párosítottam a kettőt
+egy külön segédtáblában, kézzel kikeresve a neveket. (Felmerülhet a
+kérdés, hogy miért kézzel csináltam ezt, miért nem rendeltem össze
+egyszerűen a két táblát gépi úton, a nevek alapján. A válasz jellemző,
+talán senkit nem fogok meglepni: azért, mert a NEAK-nál szereplő, előbb
+említett fájlban lévő kórháznevek és az X-TEK táblában lévő kórháznevek
+nem egyeznek pontosan. Például a NEAK-táblában „Bács-Kiskun Megyei
+Kórház, Kecskemét” szerepel, az X-TEK-ben „Bács-Kiskun Megyei Kórház a
+Szegedi Tudományegyetem Általános Orvostudományi Kar Oktató Kórháza” a
+megnevezés…) Az összerendelő tábla
+[innen](https://github.com/tamas-ferenci/KorhazakTeruletiEllatasiKotelezettsege/raw/main/KhNEAKEgyedi.csv)
+tölthető le; a kód ami ezt előkészíti, majd a végeredményt beolvassa:
 
 ``` r
 fwrite(unique(TEKData[, .(Korhaz, EgyediKod)])[order(Korhaz)], "KhNEAKEgyediKi.csv", dec = ",", sep = ";",
        bom = TRUE)
-KhLista <- as.data.table(readxl::read_excel("fekvobeteg_szakellato_intezmenyek_telephellyel_202211.xlsx", .name_repair = "universal"))
+KhLista <- as.data.table(readxl::read_excel("fekvobeteg_szakellato_intezmenyek_telephellyel_202211.xlsx",
+                                            .name_repair = "universal"))
 colnames(KhLista)[colnames(KhLista)=="NEAK.kód"] <- "NEAKKod"
 colnames(KhLista)[colnames(KhLista)=="Szakmakód"] <- "SzakmaKod"
 
@@ -578,14 +838,22 @@ előfordul (ha több ilyen is van, akkor a sorban elsőt, magyarán
 véletlenszerűen egyet):
 
 ``` r
-KhLista <- KhLista[, .SD[Telephely.városa==names(sort(-table(Telephely.városa)))[1]][1], .(EgyediKod, SzakmaKod)]
+KhLista <- KhLista[, .SD[Telephely.városa==names(sort(-table(Telephely.városa)))[1]][1],
+                   .(EgyediKod, SzakmaKod)]
 ```
 
-Így már befejezhetjük az adatok előkészítését:
+Így már összeilleszthetjük az X-TEK táblából kinyert adatokat a NEAK
+kórházi törzsével, feldúsítva az előzőt a kórház adataival (amiből
+persze a telephely városa lesz számunkra a legfontosabb):
 
 ``` r
 TEKData <- merge(TEKData, KhLista, by = c("EgyediKod", "SzakmaKod"))
+```
 
+A budapesti kerületeknél állítsuk át a számokat arab számokra, mivel a
+későbbi táblák is ezt fogják használni:
+
+``` r
 TEKData$Telepules[grepl("Budapest", TEKData$Telepules)] <-
   paste0("Budapest ", sprintf("%02d", as.numeric(as.roman(sapply(strsplit(
     substring(TEKData$Telepules[grepl("Budapest", TEKData$Telepules)], 10), ".", fixed = TRUE), `[`, 1)))),
@@ -594,31 +862,53 @@ TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)] <-
   paste0("Budapest ", sprintf("%02d", as.numeric(as.roman(sapply(strsplit(
     substring(TEKData$Telephely.városa[grepl("Budapest", TEKData$Telephely.városa)], 10), ".", fixed = TRUE),
     `[`, 1)))), ". kerület")
-
-table(TEKData$Tipus)
-TEKData$Tipus <- ifelse(TEKData$Tipus=="aktív", "Aktív", "Krónikus")
-
-saveRDS(TEKData, "TEKres_proc_20221207.rds")
-fwrite(TEKData, "TEKres_proc_20221207.csv", dec = ",", sep = ";", bom = TRUE)
-zip("TEKres_proc_20221207.zip", "TEKres_proc_20221207.csv")
 ```
 
-Utolsó lépésben kiegészítjük a táblát a korábban említett
+Végül pedig kiegészítjük a táblát a korábban említett
 plusz-információkkal:
 
 ``` r
-locs <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
-HNTdata <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
-geodata <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
-durationsLong <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+locs <- as.data.table(readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
+HNTdata <- as.data.table(readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
+geodata <- readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
+durationsLong <- readRDS(url(
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+```
 
+A [közúti elérhetőségi
+adatbázisból](https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg)
+származó elérési időkkel, melyek megadják a település és az ellátó
+kórház települési közti közúti elérési időt:
+
+``` r
 TEKData <- merge(TEKData, durationsLong[, .(Telephely.városa = Var1, Telepules = Var2, Duration)],
                  by = c("Telephely.városa", "Telepules"))
-TEKData <- merge(TEKData, HNTdata[, .(Telepules = Helység.megnevezése, Helység.jogállása, TelepulesMegye = Megye.megnevezése,
-                                      Járás.neve, Lakó.népesség)], by = "Telepules")
-TEKData <- merge(TEKData, locs[, .(Telepules = NAME, TelepulesX = X, TelepulesY = Y)], by = "Telepules")
-TEKData <- merge(TEKData, locs[, .(Telephely.városa = NAME, TelephelyX = X, TelephelyY = Y)], by = "Telephely.városa")
+```
 
+A KSH Helységnévtárával, mely tartalmazza a település lélekszámát,
+megyéjét és jogállását:
+
+``` r
+TEKData <- merge(TEKData, HNTdata[, .(Telepules = Helység.megnevezése, Helység.jogállása,
+                                      TelepulesMegye = Megye.megnevezése,
+                                      Járás.neve, Lakó.népesség)], by = "Telepules")
+```
+
+És a földrajzi adatbázissal, melynek révén elmentjük mind a település,
+mind az ellátó kórház településének földrajzi koordinátáit:
+
+``` r
+TEKData <- merge(TEKData, locs[, .(Telepules = NAME, TelepulesX = X, TelepulesY = Y)], by = "Telepules")
+TEKData <- merge(TEKData, locs[, .(Telephely.városa = NAME, TelephelyX = X, TelephelyY = Y)],
+                 by = "Telephely.városa")
+```
+
+Az eredményeket szintén mentsük le:
+
+``` r
 saveRDS(TEKData, "TEKres_full_20221207.rds")
 fwrite(TEKData, "TEKres_full_20221207.csv", dec = ",", sep = ";", bom = TRUE)
 zip("TEKres_full_20221207.zip", "TEKres_full_20221207.csv")
