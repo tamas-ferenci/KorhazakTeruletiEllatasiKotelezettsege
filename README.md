@@ -237,9 +237,13 @@ szűrhetjük a tartalmat. Ez utóbbit segít a táblázat is: ha csak néhány
 lehetőség van, akkor azok megjelennek felsorolva, ha számszerű az adat,
 akkor csúszkával szűkíthetünk.
 
-Ha valamilyen adat hiányzik, ez leglátványosabb a térkép esetén, ahol
-fehér folt jelenik meg, akkor ott a TEK adatbázisa – a következő pontban
+Ha valamilyen adat hiányzik (fehér foltok a térképen, nem hozzá rendelt
+felirat a táblában), akkor ott a TEK adatbázisa – a következő pontban
 leírt okokból kifolyólag – sajnos minden bizonnyal hiányos.
+
+E honlap `shiny` segítségével készült; a teljes forráskódját szintén
+[elérhetővé
+teszem](https://github.com/tamas-ferenci/KorhazakTeruletiEllatasiKotelezettsege/raw/main/app.R).
 
 ## Adatvalidáció
 

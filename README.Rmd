@@ -82,7 +82,9 @@ A komplexebb térképek kirajzolása időigényes, itt lehet, hogy néhány más
 
 A térkép mellett számszerű adatok is elérhetőek az oldalról. A `Táblázat` fül részletes adatokat szolgáltat, abban a szűrésben, ami a bal oldalon be van állítva. A `Statisztika` fül ezzel szemben összevontabb statisztikát mutat, de jellemzően csak a feladat szerinti szűkítésben. (Tehát például szakma lekérdezése esetén a `Táblázat` fülön csak az adott progresszivitási szint és adott típus kórházai jelennek meg, de abból soronként külön-külön az összes, míg a `Statisztika` fülön megjelenik az összes progresszivitási szint és típus, de a kórházakról csak összevont adatok jelennek meg.) Minden táblázat esetében igaz, hogy a fejléc szövegeire kattintva növekvő/csökkenő sorrendbe rendezhető a tartalom adott oszlop szerint, az alatta lévő mezőbe kattintva pedig szűrhetjük a tartalmat. Ez utóbbit segít a táblázat is: ha csak néhány lehetőség van, akkor azok megjelennek felsorolva, ha számszerű az adat, akkor csúszkával szűkíthetünk.
 
-Ha valamilyen adat hiányzik, ez leglátványosabb a térkép esetén, ahol fehér folt jelenik meg, akkor ott a TEK adatbázisa -- a következő pontban leírt okokból kifolyólag -- sajnos minden bizonnyal hiányos.
+Ha valamilyen adat hiányzik (fehér foltok a térképen, nem hozzá rendelt felirat a táblában), akkor ott a TEK adatbázisa -- a következő pontban leírt okokból kifolyólag -- sajnos minden bizonnyal hiányos.
+
+E honlap `shiny` segítségével készült; a teljes forráskódját szintén [elérhetővé teszem](https://github.com/tamas-ferenci/KorhazakTeruletiEllatasiKotelezettsege/raw/main/app.R).
 
 ## Adatvalidáció
 
