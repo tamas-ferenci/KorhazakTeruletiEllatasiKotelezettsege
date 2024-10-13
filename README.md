@@ -2,23 +2,17 @@ Kórházak területi ellátási kötelezettsége
 ================
 Ferenci Tamás (<tamas.ferenci@medstat.hu>)
 
-- <a href="#háttér" id="toc-háttér">Háttér</a>
-- <a href="#problémafelvetés"
-  id="toc-problémafelvetés">Problémafelvetés</a>
-- <a href="#összefoglalás" id="toc-összefoglalás">Összefoglalás</a>
-- <a href="#technikai-részletek" id="toc-technikai-részletek">Technikai
-  részletek</a>
-- <a href="#a-honlap-működése" id="toc-a-honlap-működése">A honlap
-  működése</a>
-- <a href="#adatvalidáció" id="toc-adatvalidáció">Adatvalidáció</a>
-- <a href="#az-optimalizáció-lehetőségei"
-  id="toc-az-optimalizáció-lehetőségei">Az optimalizáció lehetőségei</a>
-- <a href="#függelék-az-x-tek-adatainak-letöltése"
-  id="toc-függelék-az-x-tek-adatainak-letöltése">Függelék: az X-TEK
-  adatainak letöltése</a>
-- <a href="#függelék-az-adatok-tisztítása-és-előkészítése"
-  id="toc-függelék-az-adatok-tisztítása-és-előkészítése">Függelék: az
-  adatok tisztítása és előkészítése</a>
+- [Háttér](#háttér)
+- [Problémafelvetés](#problémafelvetés)
+- [Összefoglalás](#összefoglalás)
+- [Technikai részletek](#technikai-részletek)
+- [A honlap működése](#a-honlap-működése)
+- [Adatvalidáció](#adatvalidáció)
+- [Az optimalizáció lehetőségei](#az-optimalizáció-lehetőségei)
+- [Függelék: az X-TEK adatainak
+  letöltése](#függelék-az-x-tek-adatainak-letöltése)
+- [Függelék: az adatok tisztítása és
+  előkészítése](#függelék-az-adatok-tisztítása-és-előkészítése)
 
 ## Háttér
 
@@ -269,30 +263,30 @@ knitr::kable(TEKData[, .(`Duplikációk száma` = sum(duplicated(Telepules))),
                        `Duplikációk száma`!=0])
 ```
 
-| Szakma                                           | Progresszivitási szint | Típus    | Duplikációk száma |
-|:-------------------------------------------------|:-----------------------|:---------|------------------:|
-| Nephrológia                                      | 2                      | Aktív    |                 4 |
-| Csecsemő- és gyermekgyógyászat                   | 2                      | Aktív    |                 2 |
-| Gyermek-tüdőgyógyászat                           | 2                      | Aktív    |                 1 |
-| Neurológia                                       | 1                      | Aktív    |                 3 |
-| Belgyógyászat                                    | 1                      | Krónikus |                 4 |
-| Nőgyógyászat                                     | 1                      | Aktív    |                 1 |
-| Csecsemő- és gyermek fül-orr-gégegyógyászat      | 2                      | Aktív    |                 1 |
-| Fül-orr-gégegyógyászat                           | 1                      | Aktív    |                 3 |
-| Neurológia                                       | 2                      | Aktív    |                 3 |
-| Pszichiátriai rehabilitáció                      | 2                      | Krónikus |                 2 |
-| Pszichiátriai rehabilitáció                      | 3                      | Krónikus |                 1 |
-| Tüdőgyógyászati és légzésrehabilitáció           | 2                      | Krónikus |                 1 |
-| Pszichiátria                                     | 1                      | Krónikus |                 1 |
-| Kardiológiai rehabilitáció                       | 2                      | Krónikus |                 6 |
-| Kardiológia                                      | 2                      | Aktív    |                25 |
-| Fül-orr-gégegyógyászat                           | 2                      | Aktív    |                 3 |
-| Fül-orr-gégegyógyászat                           | 3                      | Aktív    |                 3 |
-| Csecsemő- és gyermekgyógyászati intenzív terápia | 2                      | Aktív    |                 1 |
-| Érsebészet                                       | 3                      | Aktív    |                 6 |
-| Érsebészet                                       | 2                      | Aktív    |                 2 |
-| Idegsebészet                                     | 3                      | Aktív    |                 1 |
-| Súlyos agysérültek rehabilitációja               | 3                      | Krónikus |                 1 |
+| Szakma | Progresszivitási szint | Típus | Duplikációk száma |
+|:---|:---|:---|---:|
+| Nephrológia | 2 | Aktív | 4 |
+| Csecsemő- és gyermekgyógyászat | 2 | Aktív | 2 |
+| Gyermek-tüdőgyógyászat | 2 | Aktív | 1 |
+| Neurológia | 1 | Aktív | 3 |
+| Belgyógyászat | 1 | Krónikus | 4 |
+| Nőgyógyászat | 1 | Aktív | 1 |
+| Csecsemő- és gyermek fül-orr-gégegyógyászat | 2 | Aktív | 1 |
+| Fül-orr-gégegyógyászat | 1 | Aktív | 3 |
+| Neurológia | 2 | Aktív | 3 |
+| Pszichiátriai rehabilitáció | 2 | Krónikus | 2 |
+| Pszichiátriai rehabilitáció | 3 | Krónikus | 1 |
+| Tüdőgyógyászati és légzésrehabilitáció | 2 | Krónikus | 1 |
+| Pszichiátria | 1 | Krónikus | 1 |
+| Kardiológiai rehabilitáció | 2 | Krónikus | 6 |
+| Kardiológia | 2 | Aktív | 25 |
+| Fül-orr-gégegyógyászat | 2 | Aktív | 3 |
+| Fül-orr-gégegyógyászat | 3 | Aktív | 3 |
+| Csecsemő- és gyermekgyógyászati intenzív terápia | 2 | Aktív | 1 |
+| Érsebészet | 3 | Aktív | 6 |
+| Érsebészet | 2 | Aktív | 2 |
+| Idegsebészet | 3 | Aktív | 1 |
+| Súlyos agysérültek rehabilitációja | 3 | Krónikus | 1 |
 
 A sokkal nagyobb probléma, hogy elképesztően nagy számú település-szakma
 pár van, amik egész egyszerűen sehová nincsenek rendelve! Hihetetlen, de
@@ -337,8 +331,12 @@ egyszerűen nem optimális a kiosztás.
 De elsőként kezdjünk egy szép, vegytiszta esettel! Az addiktológia
 szervezése 3-as progresszivitási szinten, aktív ellátásban:
 
-![Az addiktológiai ellátás szervezése, 3-as progresszivitási szint,
-aktív ellátás](AddiktologiaProg3Aktiv.png)
+<figure>
+<img src="AddiktologiaProg3Aktiv.png"
+alt="Az addiktológiai ellátás szervezése, 3-as progresszivitási szint, aktív ellátás" />
+<figcaption aria-hidden="true">Az addiktológiai ellátás szervezése, 3-as
+progresszivitási szint, aktív ellátás</figcaption>
+</figure>
 
 Teljesen tiszta, egyértelmű helyzet. (Bár egyébként itt is látszik, hogy
 még ebben az esetben sem érvényesül teljesen a „hozzá legközelebbi” elv,
@@ -353,6 +351,7 @@ De akkor mi a probléma? Nézzünk néhány példát!
 Íme a szülészet (aktív, 2-es progresszivitás):
 
 <p align="center">
+
 <img src="SzuleszetPelda.png" alt="Részlet a szülészeti ellátás szervezéséből" width="300"/>
 </p>
 
@@ -366,6 +365,7 @@ kerület válik az ellátóvá, egészen le Dömsödig.
 Ez azonban semmi az allergológiai ellátáshoz képest:
 
 <p align="center">
+
 <img src="AllergologiaPelda.png" alt="Részlet az allergológiai ellátás szervezéséből" width="300"/>
 </p>
 
@@ -378,6 +378,7 @@ A személyes kedvencem, gyermekneurológia (2-es progresszivitási szint,
 aktív):
 
 <p align="center">
+
 <img src="GyermekneurologiaPelda.png" alt="Részlet a gyermekneurológiai ellátás szervezéséből" width="300"/>
 </p>
 
@@ -515,18 +516,18 @@ as.data.table(unique(TEKData$Szakma))[1:10, .(`Szakma` = V1)]
 
 <div class="kable-table">
 
-| Szakma                                                                               |
-|:-------------------------------------------------------------------------------------|
-| 0100 Belgyógyászat : Fekvő ,Progresszivitás: 1 (aktív)                               |
-| 0102 Haematológia: Fekvő ,Progresszivitás: 1 (aktív)                                 |
-| 0102 Haematológia: Fekvő ,Progresszivitás: 2 (aktív)                                 |
+| Szakma |
+|:---|
+| 0100 Belgyógyászat : Fekvő ,Progresszivitás: 1 (aktív) |
+| 0102 Haematológia: Fekvő ,Progresszivitás: 1 (aktív) |
+| 0102 Haematológia: Fekvő ,Progresszivitás: 2 (aktív) |
 | 0103 Endokrinológia és anyagcsere és diabetológia: Fekvő ,Progresszivitás: 2 (aktív) |
-| 0104 Gasztroenterológia: Fekvő ,Progresszivitás: 2 (aktív)                           |
-| 0105 Nephrológia : Fekvő ,Progresszivitás: 2 (aktív)                                 |
-| 0200 Sebészet: Fekvő ,Progresszivitás: 2 (aktív)                                     |
-| 0202 Tüdő- és mellkassebészet : Fekvő ,Progresszivitás: 2 (aktív)                    |
-| 0203 Érsebészet: Fekvő ,Progresszivitás: 2 (aktív)                                   |
-| 0204 Idegsebészet: Fekvő ,Progresszivitás: 2 (aktív)                                 |
+| 0104 Gasztroenterológia: Fekvő ,Progresszivitás: 2 (aktív) |
+| 0105 Nephrológia : Fekvő ,Progresszivitás: 2 (aktív) |
+| 0200 Sebészet: Fekvő ,Progresszivitás: 2 (aktív) |
+| 0202 Tüdő- és mellkassebészet : Fekvő ,Progresszivitás: 2 (aktív) |
+| 0203 Érsebészet: Fekvő ,Progresszivitás: 2 (aktív) |
+| 0204 Idegsebészet: Fekvő ,Progresszivitás: 2 (aktív) |
 
 </div>
 
@@ -564,69 +565,69 @@ as.data.table(table(TEKData$SzakmaKod, TEKData$SzakmaNev))[N!=0, .(`Kód` = V1, 
 
 <div class="kable-table">
 
-| Kód  | Név                                                                                                     |     N |
-|:-----|:--------------------------------------------------------------------------------------------------------|------:|
-| 0100 | Belgyógyászat                                                                                           |  6355 |
-| 0101 | Angiológia, phlebológia, lymphológia                                                                    |  6095 |
-| 0102 | Haematológia                                                                                            |  8986 |
-| 0103 | Endokrinológia és anyagcsere és diabetológia                                                            |  6251 |
-| 0104 | Gasztroenterológia                                                                                      |  6240 |
-| 0105 | Nephrológia                                                                                             |  6255 |
-| 0106 | Geriátria                                                                                               |  5486 |
-| 0109 | Allergológia és klinikai immunológia                                                                    |  5670 |
-| 0200 | Sebészet                                                                                                |  6012 |
-| 0202 | Tüdő- és mellkassebészet                                                                                |  4777 |
-| 0203 | Érsebészet                                                                                              |  6017 |
-| 0204 | Idegsebészet                                                                                            |  6010 |
-| 0205 | Szívsebészet                                                                                            |  2414 |
-| 0215 | Csecsemő és gyermek szívsebészet                                                                        |  3177 |
-| 0405 | Szülészet                                                                                               |  6222 |
-| 0406 | Nőgyógyászat                                                                                            | 12676 |
-| 0500 | Csecsemő- és gyermekgyógyászat                                                                          |  9290 |
-| 0502 | PIC                                                                                                     |  6140 |
-| 0503 | Csecsemő- és gyermekkardiológia                                                                         |  6252 |
-| 0504 | Gyermek-tüdőgyógyászat                                                                                  |  5907 |
-| 0505 | Gyermek-gasztroenterológia                                                                              |  5911 |
-| 0506 | Gyermeksebészet, ideértve gyermekurológia                                                               |  5910 |
-| 0508 | Gyermekszemészet                                                                                        |  2435 |
-| 0509 | Csecsemő- és gyermek fül-orr-gégegyógyászat                                                             |  6250 |
-| 0511 | Gyermekneurológia                                                                                       |  6151 |
-| 0515 | Csecsemő- és gyermekgyógyászati intenzív terápia                                                        |  5907 |
-| 0600 | Fül-orr-gégegyógyászat                                                                                  |  9437 |
-| 0700 | Szemészet                                                                                               |  5608 |
-| 0800 | Bőr- és nemibeteg ellátás                                                                               |  5908 |
-| 0900 | Neurológia                                                                                              |  9191 |
-| 0901 | Stroke ellátás                                                                                          |  3092 |
-| 1000 | Ortopédia                                                                                               |  5910 |
-| 1002 | Traumatológia                                                                                           |  9529 |
-| 1100 | Urológia                                                                                                |  6011 |
-| 1200 | Klinikai onkológia                                                                                      |  8661 |
-| 1201 | Sugárterápia                                                                                            |  5786 |
-| 1400 | Reumatológia                                                                                            |  9187 |
-| 1600 | Infektológia                                                                                            |  5911 |
-| 1700 | Arc-állcsont-szájsebészet                                                                               |  5027 |
-| 1800 | Pszichiátria                                                                                            | 12582 |
-| 1801 | Addiktológia                                                                                            |  3177 |
-| 1804 | Pszichiátriai rehabilitáció                                                                             |  9530 |
-| 1900 | Tüdőgyógyászat                                                                                          |  8828 |
-| 1903 | Tüdőgyógyászati és légzésrehabilitáció                                                                  |  5567 |
-| 2000 | Plasztikai helyreállító és esztétikai sebészet                                                          |  5010 |
-| 2001 | Égéssebészet                                                                                            |  5276 |
-| 2002 | Gyermek plasztikai és égéssebészet                                                                      |  3177 |
-| 2201 | Mozgásszervi rehabilitáció                                                                              |  9526 |
-| 2203 | Gasztroenterológiai rehabilitáció                                                                       |  9528 |
-| 2205 | Gyermek rehabilitáció                                                                                   |  6085 |
-| 2206 | Súlyos agysérültek rehabilitációja                                                                      |  3925 |
-| 2207 | Gerincvelő sérültek rehabilitációja                                                                     |  3177 |
-| 2208 | Polytraumatizált, égésbeteg és szeptikus csontfolyamatok utáni rehabilitáció                            |  3177 |
-| 2209 | Súlyos központi idegrendszeri sérültek, polytraumatizáltak és égésbetegek rehabilitációja gyermekkorban |  2413 |
-| 2300 | Gyermek- és ifjúságpszichiátria                                                                         |  3177 |
-| 2301 | Gyermek- és ifjúságpszichiátriai rehabilitáció                                                          |  3177 |
-| 2303 | Gyermek- és ifjúságaddiktológiai rehabilitáció                                                          |  3177 |
-| 4000 | Kardiológia                                                                                             |  9085 |
-| 4003 | Kardiológiai rehabilitáció                                                                              |  5956 |
-| 7305 | Ápolás, szakápolás                                                                                      |  3178 |
-| 7306 | Felnőtt hospice-palliatív ellátás                                                                       |  3162 |
+| Kód | Név | N |
+|:---|:---|---:|
+| 0100 | Belgyógyászat | 6355 |
+| 0101 | Angiológia, phlebológia, lymphológia | 6095 |
+| 0102 | Haematológia | 8986 |
+| 0103 | Endokrinológia és anyagcsere és diabetológia | 6251 |
+| 0104 | Gasztroenterológia | 6240 |
+| 0105 | Nephrológia | 6255 |
+| 0106 | Geriátria | 5486 |
+| 0109 | Allergológia és klinikai immunológia | 5670 |
+| 0200 | Sebészet | 6012 |
+| 0202 | Tüdő- és mellkassebészet | 4777 |
+| 0203 | Érsebészet | 6017 |
+| 0204 | Idegsebészet | 6010 |
+| 0205 | Szívsebészet | 2414 |
+| 0215 | Csecsemő és gyermek szívsebészet | 3177 |
+| 0405 | Szülészet | 6222 |
+| 0406 | Nőgyógyászat | 12676 |
+| 0500 | Csecsemő- és gyermekgyógyászat | 9290 |
+| 0502 | PIC | 6140 |
+| 0503 | Csecsemő- és gyermekkardiológia | 6252 |
+| 0504 | Gyermek-tüdőgyógyászat | 5907 |
+| 0505 | Gyermek-gasztroenterológia | 5911 |
+| 0506 | Gyermeksebészet, ideértve gyermekurológia | 5910 |
+| 0508 | Gyermekszemészet | 2435 |
+| 0509 | Csecsemő- és gyermek fül-orr-gégegyógyászat | 6250 |
+| 0511 | Gyermekneurológia | 6151 |
+| 0515 | Csecsemő- és gyermekgyógyászati intenzív terápia | 5907 |
+| 0600 | Fül-orr-gégegyógyászat | 9437 |
+| 0700 | Szemészet | 5608 |
+| 0800 | Bőr- és nemibeteg ellátás | 5908 |
+| 0900 | Neurológia | 9191 |
+| 0901 | Stroke ellátás | 3092 |
+| 1000 | Ortopédia | 5910 |
+| 1002 | Traumatológia | 9529 |
+| 1100 | Urológia | 6011 |
+| 1200 | Klinikai onkológia | 8661 |
+| 1201 | Sugárterápia | 5786 |
+| 1400 | Reumatológia | 9187 |
+| 1600 | Infektológia | 5911 |
+| 1700 | Arc-állcsont-szájsebészet | 5027 |
+| 1800 | Pszichiátria | 12582 |
+| 1801 | Addiktológia | 3177 |
+| 1804 | Pszichiátriai rehabilitáció | 9530 |
+| 1900 | Tüdőgyógyászat | 8828 |
+| 1903 | Tüdőgyógyászati és légzésrehabilitáció | 5567 |
+| 2000 | Plasztikai helyreállító és esztétikai sebészet | 5010 |
+| 2001 | Égéssebészet | 5276 |
+| 2002 | Gyermek plasztikai és égéssebészet | 3177 |
+| 2201 | Mozgásszervi rehabilitáció | 9526 |
+| 2203 | Gasztroenterológiai rehabilitáció | 9528 |
+| 2205 | Gyermek rehabilitáció | 6085 |
+| 2206 | Súlyos agysérültek rehabilitációja | 3925 |
+| 2207 | Gerincvelő sérültek rehabilitációja | 3177 |
+| 2208 | Polytraumatizált, égésbeteg és szeptikus csontfolyamatok utáni rehabilitáció | 3177 |
+| 2209 | Súlyos központi idegrendszeri sérültek, polytraumatizáltak és égésbetegek rehabilitációja gyermekkorban | 2413 |
+| 2300 | Gyermek- és ifjúságpszichiátria | 3177 |
+| 2301 | Gyermek- és ifjúságpszichiátriai rehabilitáció | 3177 |
+| 2303 | Gyermek- és ifjúságaddiktológiai rehabilitáció | 3177 |
+| 4000 | Kardiológia | 9085 |
+| 4003 | Kardiológiai rehabilitáció | 5956 |
+| 7305 | Ápolás, szakápolás | 3178 |
+| 7306 | Felnőtt hospice-palliatív ellátás | 3162 |
 
 </div>
 
@@ -772,18 +773,18 @@ as.data.table(unique(TEKData$Korhaz))[1:10, .(`Kórház` = V1)]
 
 <div class="kable-table">
 
-| Kórház                                                                                                   |
-|:---------------------------------------------------------------------------------------------------------|
+| Kórház |
+|:---|
 | Bács-Kiskun Megyei Kórház a Szegedi Tudományegyetem Általános Orvostudományi Kar Oktató Kórháza (000301) |
-| Békés Megyei Központi Kórház (000401)                                                                    |
-| Nagykőrösi Rehabilitációs Szakkórház és Rendelőintézet (130300)                                          |
-| DR. LÁSZLÓ ELEK KÓRHÁZ ÉS RENDELŐINTÉZET, OROSHÁZA (040300)                                              |
-| Békés Megyei Központi Kórház (040200)                                                                    |
-| Kiskunhalasi Semmelweis Kórház (501177)                                                                  |
-| Szarvasi Szakorvosi Egészségügyi Szolgáltató Korlátolt Felelősségű Társaság (102780)                     |
-| Budapesti Szent Ferenc Kórház (220300)                                                                   |
-| Bajcsy-Zsilinszky Kórház és Rendelőintézet (011200)                                                      |
-| Betegápoló Irgalmas Rend (022852)                                                                        |
+| Békés Megyei Központi Kórház (000401) |
+| Nagykőrösi Rehabilitációs Szakkórház és Rendelőintézet (130300) |
+| DR. LÁSZLÓ ELEK KÓRHÁZ ÉS RENDELŐINTÉZET, OROSHÁZA (040300) |
+| Békés Megyei Központi Kórház (040200) |
+| Kiskunhalasi Semmelweis Kórház (501177) |
+| Szarvasi Szakorvosi Egészségügyi Szolgáltató Korlátolt Felelősségű Társaság (102780) |
+| Budapesti Szent Ferenc Kórház (220300) |
+| Bajcsy-Zsilinszky Kórház és Rendelőintézet (011200) |
+| Betegápoló Irgalmas Rend (022852) |
 
 </div>
 
@@ -873,13 +874,38 @@ plusz-információkkal:
 
 ``` r
 locs <- as.data.table(readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
-HNTdata <- as.data.table(readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/locs.rds")))
+HNTdata <- as.data.table(readxl::read_excel("hnt_letoltes_2022.xlsx", .name_repair = "universal", skip = 2))
+```
+
+    ## New names:
+    ## • `Helység megnevezése` -> `Helység.megnevezése`
+    ## • `Helység KSH kódja` -> `Helység.KSH.kódja`
+    ## • `Helység jogállása` -> `Helység.jogállása`
+    ## • `Megye megnevezése` -> `Megye.megnevezése`
+    ## • `Járás kódja` -> `Járás.kódja`
+    ## • `Járás neve` -> `Járás.neve`
+    ## • `Járás székhelye` -> `Járás.székhelye`
+    ## • `Polgármesteri hivatal, közös önkormányzati hivatal kódja` ->
+    ##   `Polgármesteri.hivatal..közös.önkormányzati.hivatal.kódja`
+    ## • `Polgármesteri hivatal, közös önkormányzati hivatal székhelye` ->
+    ##   `Polgármesteri.hivatal..közös.önkormányzati.hivatal.székhelye`
+    ## • `Terület (hektár)` -> `Terület...hektár.`
+    ## • `Lakó-népesség` -> `Lakó.népesség`
+    ## • `Lakások száma` -> `Lakások.száma`
+    ## • `Becsült terület-adatokkal` -> `Becsült.terület.adatokkal`
+
+``` r
+HNTdata <- HNTdata[!HNTdata$Helység.megnevezése%in%c("Összesen", "Budapest"),]
+HNTdata$Helység.megnevezése <- ifelse(grepl("Budapest", HNTdata$Helység.megnevezése),
+                                      paste0(substring(HNTdata$Helység.megnevezése, 1,
+                                                       nchar(HNTdata$Helység.megnevezése)-1),
+                                             "ület"),
+                                      HNTdata$Helység.megnevezése)
 geodata <- readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/geodata.rds"))
 durationsLong <- readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/durationsSymmLong.rds"))
 ```
 
 A [közúti elérhetőségi

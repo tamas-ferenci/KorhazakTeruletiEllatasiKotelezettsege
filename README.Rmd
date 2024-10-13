@@ -17,7 +17,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, fig.width = 16/3*2, fig.height = 9/3*2, dpi = 300, dev = "ragg_png")
 library(data.table)
 TEKData <- readRDS("TEKres_full_20221207.rds")
-locs <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
+locs <- as.data.table(readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/locs.rds")))
 ```
 
 ## Háttér
@@ -374,13 +374,18 @@ Végül pedig kiegészítjük a táblát a korábban említett plusz-informáci�
 
 ```{r}
 locs <- as.data.table(readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/locs.rds")))
-HNTdata <- as.data.table(readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/HNTdata.rds")))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/locs.rds")))
+HNTdata <- as.data.table(readxl::read_excel("hnt_letoltes_2022.xlsx", .name_repair = "universal", skip = 2))
+HNTdata <- HNTdata[!HNTdata$Helység.megnevezése%in%c("Összesen", "Budapest"),]
+HNTdata$Helység.megnevezése <- ifelse(grepl("Budapest", HNTdata$Helység.megnevezése),
+                                      paste0(substring(HNTdata$Helység.megnevezése, 1,
+                                                       nchar(HNTdata$Helység.megnevezése)-1),
+                                             "ület"),
+                                      HNTdata$Helység.megnevezése)
 geodata <- readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/geodata.rds"))
 durationsLong <- readRDS(url(
-  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/durationsSymmLong.rds"))
+  "https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/durationsSymmLong.rds"))
 ```
 
 A [közúti elérhetőségi adatbázisból](https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg) származó elérési időkkel, melyek megadják a település és az ellátó kórház települési közti közúti elérési időt:

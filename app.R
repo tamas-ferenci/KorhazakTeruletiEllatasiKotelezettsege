@@ -8,7 +8,7 @@ captionlab <- paste0("Ferenci Tamás, http://www.medstat.hu/\nhttps://github.com
 
 TEKData <- readRDS("TEKres_full_20221207.rds")
 megyedata <- readRDS("megyedata.rds")
-geodata <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/main/geodata.rds"))
+geodata <- readRDS(url("https://github.com/tamas-ferenci/MagyarorszagKozutiElerhetoseg/raw/refs/heads/main/data/geodata.rds"))
 
 options(DT.options = list(language = list(url = "https://cdn.datatables.net/plug-ins/1.13.1/i18n/hu.json")))
 
@@ -189,7 +189,7 @@ server <- function(input, output, session) {
            "telepules" = {
              req(input$telepules, input$telepulesprog, input$telepulestipus)
              ggplot2::ggplot(dataTelepules()) + ggplot2::geom_sf(data = megyedata) +
-               ggplot2::geom_point(ggplot2::aes(x = TelepulesX[1], y = TelepulesY[1]), color = "red") +
+               ggplot2::geom_point(data = dataTelepules()[1], ggplot2::aes(x = TelepulesX, y = TelepulesY), color = "red") +
                ggplot2::geom_point(ggplot2::aes(x = TelephelyX, y = TelephelyY, size = N)) + ggplot2::guides(size = "none") +
                ggplot2::geom_segment(ggplot2::aes(x = TelepulesX[1], y = TelepulesY[1], xend = TelephelyX, yend = TelephelyY)) +
                ggplot2::labs(x = "", y = "", title = input$telepules, caption = captionlab,
